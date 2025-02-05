@@ -15,5 +15,10 @@ RUN yarn build:app:docker
 FROM nginx:1.27-alpine
 
 COPY --from=build /opt/node_app/excalidraw-app/build /usr/share/nginx/html
+COPY --from=build /opt/node_app/osc-entrypoint.sh ./osc-entrypoint.sh
+RUN chmod +x ./osc-entrypoint.sh
+EXPOSE 8080
 
+ENTRYPOINT ["./osc-entrypoint.sh"]
+CMD [ "nginx", "-g", "daemon off;" ]
 HEALTHCHECK CMD wget -q -O /dev/null http://localhost || exit 1
